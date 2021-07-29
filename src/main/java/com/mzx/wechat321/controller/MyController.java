@@ -1,16 +1,18 @@
 package com.mzx.wechat321.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.mzx.wechat321.pojo.MsgCodeKey;
 import com.mzx.wechat321.pojo.Teml;
-import com.mzx.wechat321.pojo.TextMessage;
+import com.mzx.wechat321.pojo.ReplyMessage;
+import com.mzx.wechat321.pojo.UserRqPojo;
+import com.mzx.wechat321.service.MsgService;
 import com.mzx.wechat321.utill.JsoupUtill;
 import com.mzx.wechat321.utill.WechatMessageUtil;
-import com.mzx.wechat321.utill.unutill;
+import com.mzx.wechat321.utill.MyUtill;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.ServletException;
@@ -18,18 +20,20 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
-import static com.mzx.wechat321.utill.byteToUtill.byteToStr;
+import static com.mzx.wechat321.utill.ByteToUtill.byteToStr;
 
 @Controller
 public class MyController {
 
     // 与接口配置信息中的Token要一致
     private static String token = "mzxtoken";
+
+    @Autowired
+    MsgService msgService;
 
     @RequestMapping(value = "/getCont",produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -43,31 +47,41 @@ public class MyController {
 
     @RequestMapping(value = "/getToken",produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String getToken(HttpServletRequest request) throws IOException, ServletException {
-        Map<String, String> map = WechatMessageUtil.xmlToMap(request);
-//        System.out.println(map);
-        String Content = map.get("Content");
-        // 发送方帐号（一个OpenID）
-        String fromUserName = map.get("FromUserName");
-        // 开发者微信号
-        String toUserName = map.get("ToUserName");
-        // 消息类型
-        String msgType = map.get("MsgType");
-        // 默认回复一个"success"
-        String responseMessage = "success";
-        String msg = unutill.getCont(Content);
+    public String getToken(HttpServletRequest request) throws IOException {
+        ReplyMessage replyMessage = MyUtill.getReplyMessage(request);
+        String msg = "";
+        // 回复内容
+        String responseMessage = "";
         // 对消息进行处理
-        if (WechatMessageUtil.MESSAGE_TEXT.equals(msgType)) {// 文本消息
-            TextMessage textMessage = new TextMessage();
-            textMessage.setMsgType(WechatMessageUtil.MESSAGE_TEXT);
-            textMessage.setToUserName(fromUserName);
-            textMessage.setFromUserName(toUserName);
-            textMessage.setCreateTime(System.currentTimeMillis());
-            textMessage.setContent(msg);
-            responseMessage = WechatMessageUtil.textMessageToXml(textMessage);
+        switch (replyMessage.getMsgType()){
+            case WechatMessageUtil.MESSAGE_TEXT:
+                replyMessage.setCreateTime(System.currentTimeMillis());
+                if (Character.isDigit(replyMessage.getContent().charAt(0))){
+                    if (replyMessage.getContent().length()>3){
+                        msg = msgService.searchMsgbyCode(replyMessage.getContent()).getMsg_content();
+
+                    }else {
+                        msg = MyUtill.getCont(replyMessage.getContent());
+                    }
+                }else {
+                    // 关键字查询暂缓
+//                    msg = msgService.searchMsgbyKey(replyMessage.getContent());
+                }
+                replyMessage.setContent(msg);
+                responseMessage = WechatMessageUtil.textMessageToXml(replyMessage);
+                break;
+            case WechatMessageUtil.MESSAtGE_IMAGE:
+                break;
+            case WechatMessageUtil.MESSAGE_VOICE:
+                break;
+            case WechatMessageUtil.MESSAGE_LOCATION:
+                break;
+            case WechatMessageUtil.MESSAGE_EVENT_SUBSCRIBE:
+                break;
+            case WechatMessageUtil.MESSAGE_EVENT_UNSUBSCRIBE:
+                break;
         }
-//        System.out.println(Content);
-//        System.out.println(responseMessage);
+
         return responseMessage;
     }
 

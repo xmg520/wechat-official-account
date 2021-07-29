@@ -1,6 +1,6 @@
 package com.mzx.wechat321.utill;
 
-public class byteToUtill {
+public class ByteToUtill {
     /**
      * 将字节数组转换为十六进制字符串
      */

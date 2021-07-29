@@ -2,7 +2,7 @@ package com.mzx.wechat321.pojo;
 
 import javax.swing.text.StringContent;
 
-public class TextMessage {
+public class ReplyMessage {
     // 开发者微信号
     private String ToUserName;
     // 发送方帐号（一个OpenID）

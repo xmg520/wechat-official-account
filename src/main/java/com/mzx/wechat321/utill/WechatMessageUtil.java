@@ -1,6 +1,6 @@
 package com.mzx.wechat321.utill;
 
-import com.mzx.wechat321.pojo.TextMessage;
+import com.mzx.wechat321.pojo.ReplyMessage;
 import com.thoughtworks.xstream.XStream;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -115,13 +115,13 @@ public class WechatMessageUtil {
     /**
      * 文本消息转化为xml
      *
-     * @param textMessage
+     * @param replyMessage
      * @return
      */
-    public static String textMessageToXml(TextMessage textMessage) {
+    public static String textMessageToXml(ReplyMessage replyMessage) {
         XStream xstream = new XStream();
-        xstream.alias("xml", textMessage.getClass());
-        return xstream.toXML(textMessage);
+        xstream.alias("xml", replyMessage.getClass());
+        return xstream.toXML(replyMessage);
     }
 
 }
