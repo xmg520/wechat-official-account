@@ -51,6 +51,10 @@ class Wechat321ApplicationTests {
                 System.out.println(6);
                 break;
         }
+        MsgCodeKey m = new MsgCodeKey();
+        System.out.println(m);
+        m.setMsg_isable(1);
+        System.out.println(m);
     }
 
 }
