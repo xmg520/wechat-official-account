@@ -15,6 +15,9 @@ public interface MsgDao {
     // 查询所有消息数据接口
     List<MsgCodeKey> findAll();
 
+    // 查询所有消息数据总数
+    int findAllCount();
+
     // 根据id删除接口
     int deleteById(int did);
 

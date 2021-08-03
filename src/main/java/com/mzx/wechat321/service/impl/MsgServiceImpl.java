@@ -1,5 +1,6 @@
 package com.mzx.wechat321.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.mzx.wechat321.dao.MsgDao;
 import com.mzx.wechat321.pojo.MsgCodeKey;
 import com.mzx.wechat321.service.MsgService;
@@ -11,7 +12,7 @@ import java.util.List;
 @Service
 public class MsgServiceImpl implements MsgService {
 
-    @Autowired
+    @Autowired(required = false)
     MsgDao msgDao;
 
     @Override
@@ -27,6 +28,11 @@ public class MsgServiceImpl implements MsgService {
     @Override
     public List<MsgCodeKey> findAll() {
         return msgDao.findAll();
+    }
+
+    @Override
+    public int findAllCount() {
+        return msgDao.findAllCount();
     }
 
     @Override
@@ -52,5 +58,15 @@ public class MsgServiceImpl implements MsgService {
             code = 1;
         }
         return msgDao.updateAbleByMsg(code);
+    }
+
+    @Override
+    public List<MsgCodeKey> queryUserListPaged(MsgCodeKey msgCodeKey, Integer page, Integer pageSize) {
+        // 开始分页
+        PageHelper.startPage(page,pageSize);
+
+        List<MsgCodeKey> msgCodeKeyList = msgDao.findAll();
+
+        return msgCodeKeyList;
     }
 }

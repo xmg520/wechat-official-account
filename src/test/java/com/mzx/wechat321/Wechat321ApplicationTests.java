@@ -1,5 +1,6 @@
 package com.mzx.wechat321;
 
+import com.github.pagehelper.PageHelper;
 import com.mzx.wechat321.pojo.MsgCodeKey;
 import com.mzx.wechat321.pojo.ReplyMessage;
 import com.mzx.wechat321.service.MsgService;
@@ -18,10 +19,14 @@ class Wechat321ApplicationTests {
 
     @Test
     void contextLoads() {
-        MsgCodeKey msgCodeKey = msgService.searchMsgbyCode("1024");
+        MsgCodeKey msgCodeKey = msgService.searchMsgbyCode("11");
         System.out.println(msgCodeKey);
-        List<MsgCodeKey> list = msgService.searchMsgbyKey("个人");
-        list.stream().forEach(System.out::println);
+//        List<MsgCodeKey> list = msgService.searchMsgbyKey("个人");
+//        list.stream().forEach(System.out::println);
+//        PageHelper.startPage(2,4);
+//        System.out.println(6/4);
+//        List<MsgCodeKey> msgCodeKeyList = msgService.findAll();
+//        msgCodeKeyList.forEach(System.out::println);
     }
 
     @Test

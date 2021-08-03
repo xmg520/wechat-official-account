@@ -13,6 +13,10 @@
         select * from sys_msg where 1 = 1
     </select>
 
+    <select id="findAllCount" resultType="int">
+        select count(*) from sys_msg where 1 = 1
+    </select>
+
     <delete id="deleteById" parameterType="int">
         delete from sys_msg where id = #{did}
     </delete>

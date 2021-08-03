@@ -15,6 +15,9 @@ public interface MsgService {
     // 查询所有消息数据接口
     List<MsgCodeKey> findAll();
 
+    // 查询所有消息数据总数
+    int findAllCount();
+
     // 根据id删除接口
     int deleteById(int did);
 
@@ -26,4 +29,7 @@ public interface MsgService {
 
     // 开启关闭消息状态
     MsgCodeKey updateAbleByMsg(MsgCodeKey msgCodeKey);
+
+    // 分页查询
+    public List<MsgCodeKey> queryUserListPaged(MsgCodeKey msgCodeKey, Integer page, Integer pageSize);
 }
