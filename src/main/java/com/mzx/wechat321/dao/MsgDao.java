@@ -22,11 +22,13 @@ public interface MsgDao {
     int deleteById(int did);
 
     // 修改对象接口
-    MsgCodeKey updateByMsg(MsgCodeKey msgCodeKey);
+    int updateByMsg(MsgCodeKey msgCodeKey);
 
     // 添加对象接口
-    MsgCodeKey addByMsg(MsgCodeKey msgCodeKey);
+    int addByMsg(MsgCodeKey msgCodeKey);
 
     // 开启关闭消息状态
     MsgCodeKey updateAbleByMsg(int code);
+
+    List<MsgCodeKey> findByMsgKey(MsgCodeKey msgCodeKey);
 }

@@ -5,13 +5,10 @@ import com.mzx.wechat321.common.ResponseCommon;
 import com.mzx.wechat321.pojo.MsgCodeKey;
 import com.mzx.wechat321.service.MsgService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/msg")
@@ -22,58 +19,51 @@ public class MsgController {
 
 
     @RequestMapping("/select")
-    public ResponseCommon select(@RequestParam(value = "msgCodeKey", required = false) MsgCodeKey msgCodeKey,
-                                 @RequestParam(value = "pageNo", required = false, defaultValue = "1") int pageNo,
-                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize){
-        ResponseCommon responseCommon = new ResponseCommon();
-        responseCommon.setCode(200);
-        responseCommon.setMsg("success");
-        responseCommon.setPageNo(pageNo);
-        responseCommon.setPageSize(pageSize);
-        List<MsgCodeKey> msgCodeKeys =  msgService.queryUserListPaged(msgCodeKey,pageNo,pageSize);
+    public ResponseCommon select(@RequestParam(value = "pageNo", required = false, defaultValue = "1") int pageNo,
+                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                 @RequestParam(value = "msg_name", required = false, defaultValue = "") String msg_name,
+                                 @RequestParam(value = "msg_code", required = false, defaultValue = "") String msg_code,
+                                 @RequestParam(value = "status", required = false, defaultValue = "2") int status,
+                                 @RequestParam(value = "date", required = false, defaultValue = "") String date
+    ){
         int allcount = msgService.findAllCount();
-        responseCommon.setTotalCount(allcount);
-        responseCommon.setTotalPage((int)Math.ceil(allcount/pageSize)>0?(int)Math.ceil(allcount/pageSize)+1:1);
-        responseCommon.setData(msgCodeKeys);
+        MsgCodeKey msgCodeKey = new MsgCodeKey(date,msg_name,msg_code,status);
+        List<MsgCodeKey> msgCodeKeys =  msgService.queryUserListPaged(msgCodeKey,pageNo,pageSize);
+        ResponseCommon responseCommon = new ResponseCommon(pageNo,pageSize,200,"success",
+                (int)Math.ceil(allcount/pageSize)>0?(int)Math.ceil(allcount/pageSize)+1:1,
+                allcount,msgCodeKeys
+
+        );
         return responseCommon;
     }
 
-
-    @RequestMapping("/selectByCode")
-    public ResponseCommon selectByCode(int msg_code){
-        ResponseCommon responseCommon = new ResponseCommon();
-//        responseCommon.setCode(200);
-//        responseCommon.setMsg("success");
-//        responseCommon.setPageNo(pageNo);
-//        responseCommon.setPageSize(pageSize);
-//        List<MsgCodeKey> msgCodeKeys =  msgService.queryUserListPaged(pageNo,pageSize);
-//        int allcount = msgService.findAllCount();
-//        responseCommon.setTotalCount(allcount);
-//        responseCommon.setTotalPage((int)Math.ceil(allcount/pageSize)>0?(int)Math.ceil(allcount/pageSize)+1:1);
-//        responseCommon.setData(msgCodeKeys);
-        return responseCommon;
-
-    }
 
     @RequestMapping("/deleteById")
-    public Map<String,Object> deleteById(String id){
-        Map<String,Object> map = new HashMap<>();
+    public ResponseCommon deleteById(@RequestParam String id){
+        ResponseCommon responseCommon = new ResponseCommon();
         int did = Integer.valueOf(id);
-        map.put("code",200);
-        map.put("data",msgService.deleteById(did)>=0?"添加数据成功":"删除失败，无法找到信息");
-        return map;
+        responseCommon.setCode(200);
+        responseCommon.setMsg(msgService.deleteById(did)>=0?"添加数据成功":"删除失败，无法找到信息");
+        return responseCommon;
     }
 
-    @RequestMapping("/saveByMsg")
-    public ResponseCommon saveByMsg(MsgCodeKey msgCodeKey){
+    @PostMapping("/saveByMsg")
+    public ResponseCommon saveByMsg(@RequestBody MsgCodeKey msgCodeKey){
         ResponseCommon responseCommon = new ResponseCommon();
-        MsgCodeKey findmsg = msgService.searchMsgbyCode(msgCodeKey.getMsg_code());
-        if (findmsg!=null){
-            msgService.updateAbleByMsg(msgCodeKey);
-            responseCommon.setMsg("修改成功");
-        }else {
+        // 处理前端时间格式
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String lctime = localDateTime.toString().substring(0,localDateTime.toString().length()-7).replace("T"," ");
+        msgCodeKey.setCreate_time(lctime);
+
+        // 当id为0为添加接口 其他均为修改接口
+        if (msgCodeKey.getId() == 0){
+            // 去除id 让数据库自增数据
+            msgCodeKey.setId(null);
             msgService.addByMsg(msgCodeKey);
             responseCommon.setMsg("添加成功");
+        }else {
+            msgService.updateByMsg(msgCodeKey);
+            responseCommon.setMsg("修改成功");
         }
         responseCommon.setCode(200);
         return responseCommon;

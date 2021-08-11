@@ -12,6 +12,16 @@ public class MsgCodeKey implements Serializable {
     // 默认添加为0 关闭状态 需要后台开启
     private int msg_isable = 0;
 
+    public MsgCodeKey() {
+    }
+
+    public MsgCodeKey(String create_time, String msg_name, String msg_code, int msg_isable) {
+        this.create_time = create_time;
+        this.msg_name = msg_name;
+        this.msg_code = msg_code;
+        this.msg_isable = msg_isable;
+    }
+
     @Override
     public String toString() {
         return "MsgCodeKey{" +

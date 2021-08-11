@@ -17,13 +17,35 @@
         select count(*) from sys_msg where 1 = 1
     </select>
 
+    <select id="findByMsgKey" resultType="com.mzx.wechat321.pojo.MsgCodeKey">
+       select * from sys_msg where 1 = 1
+        <if test="msg_name != ''">
+         and msg_name LIKE CONCAT('%',#{msg_name},'%')
+        </if>
+        <if test="msg_code != ''">
+            and msg_code = #{msg_code}
+        </if>
+        <if test="msg_isable == 0 || msg_isable == 1">
+            and msg_isable = #{msg_isable   }
+        </if>
+        <if test="create_time != ''">
+            and create_time LIKE CONCAT('%',#{create_time},'%')
+        </if>
+    </select>
+
     <delete id="deleteById" parameterType="int">
         delete from sys_msg where id = #{did}
     </delete>
 
-    <update id="updateByMsg" parameterType="com.mzx.wechat321.pojo.MsgCodeKey">
-        update sys_msg set create_time = #{create_time} , msg_name = #{msg_name} , msg_code = #{msg_code},
-        msg_keyword = #{msg_keyword},msg_content = #{msg_content} where id = #{id}
+    <update id="updateByMsg">
+        update sys_msg set
+        create_time = #{create_time} ,
+        msg_name = #{msg_name} ,
+        msg_code = #{msg_code},
+        msg_keyword = #{msg_keyword},
+        msg_isable = #{msg_isable},
+        msg_content = #{msg_content}
+        where id = #{id}
     </update>
 
     <update id="updateAbleByMsg" parameterType="int">
@@ -32,7 +54,7 @@
 
     <!--执行增加操作的SQL语句。id和parameterType分别与IUserOperation接口中的addUser方法的名字和参数类型一致。
    useGeneratedKeys设置为"true"表明要MyBatis获取由数据库自动生成的主键；keyProperty="id"指定把获取到的主键值注入到User的id属性-->
-    <insert id="addByMsg" parameterType="com.mzx.wechat321.pojo.MsgCodeKey"
+    <insert id="addByMsg"
             useGeneratedKeys="true" keyProperty="id">
         insert into sys_msg(create_time,msg_name,msg_code,msg_keyword,msg_content)
         values (#{create_time},#{msg_name},#{msg_code},#{msg_keyword},#{msg_content})

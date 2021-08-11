@@ -22,13 +22,16 @@ public interface MsgService {
     int deleteById(int did);
 
     // 修改对象接口
-    MsgCodeKey updateByMsg(MsgCodeKey msgCodeKey);
+    int updateByMsg(MsgCodeKey msgCodeKey);
 
     // 添加对象接口
-    MsgCodeKey addByMsg(MsgCodeKey msgCodeKey);
+    int addByMsg(MsgCodeKey msgCodeKey);
 
     // 开启关闭消息状态
     MsgCodeKey updateAbleByMsg(MsgCodeKey msgCodeKey);
+
+    // 根据对象查询数据
+    List<MsgCodeKey> findByMsgKey(MsgCodeKey msgCodeKey);
 
     // 分页查询
     public List<MsgCodeKey> queryUserListPaged(MsgCodeKey msgCodeKey, Integer page, Integer pageSize);

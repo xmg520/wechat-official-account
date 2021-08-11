@@ -15,6 +15,19 @@ public class ResponseCommon {
 
     private Object data;
 
+    public ResponseCommon() {
+    }
+
+    public ResponseCommon(Integer pageNo, Integer pageSize, int code, String msg, int totalPage, int totalCount, Object data) {
+        this.pageNo = pageNo;
+        this.pageSize = pageSize;
+        this.code = code;
+        this.msg = msg;
+        this.totalPage = totalPage;
+        this.totalCount = totalCount;
+        this.data = data;
+    }
+
     @Override
     public String toString() {
         return "ResponseCommon{" +

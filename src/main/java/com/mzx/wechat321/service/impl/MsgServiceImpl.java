@@ -41,12 +41,12 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public MsgCodeKey updateByMsg(MsgCodeKey msgCodeKey) {
+    public int updateByMsg(MsgCodeKey msgCodeKey) {
         return msgDao.updateByMsg(msgCodeKey);
     }
 
     @Override
-    public MsgCodeKey addByMsg(MsgCodeKey msgCodeKey) {
+    public int addByMsg(MsgCodeKey msgCodeKey) {
         return msgDao.addByMsg(msgCodeKey);
     }
 
@@ -61,11 +61,21 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
+    public List<MsgCodeKey> findByMsgKey(MsgCodeKey msgCodeKey) {
+        return msgDao.findByMsgKey(msgCodeKey);
+    }
+
+    @Override
     public List<MsgCodeKey> queryUserListPaged(MsgCodeKey msgCodeKey, Integer page, Integer pageSize) {
+
+        if (msgCodeKey.getCreate_time() != ""){
+            String ctime = msgCodeKey.getCreate_time().split("T")[0].replace("\"","");
+            msgCodeKey.setCreate_time(ctime);
+        }
+
         // 开始分页
         PageHelper.startPage(page,pageSize);
-
-        List<MsgCodeKey> msgCodeKeyList = msgDao.findAll();
+        List<MsgCodeKey> msgCodeKeyList = msgDao.findByMsgKey(msgCodeKey);
 
         return msgCodeKeyList;
     }

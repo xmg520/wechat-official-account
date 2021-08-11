@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @SpringBootTest
@@ -19,8 +21,13 @@ class Wechat321ApplicationTests {
 
     @Test
     void contextLoads() {
-        MsgCodeKey msgCodeKey = msgService.searchMsgbyCode("11");
-        System.out.println(msgCodeKey);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        // 2021-08-04 10:19
+        String lctime = localDateTime.toString().substring(0,localDateTime.toString().length()-7).replace("T"," ");
+        System.out.println(lctime);
+
+//        MsgCodeKey msgCodeKey = msgService.searchMsgbyCode("11");
+//        System.out.println(msgCodeKey);
 //        List<MsgCodeKey> list = msgService.searchMsgbyKey("个人");
 //        list.stream().forEach(System.out::println);
 //        PageHelper.startPage(2,4);
@@ -60,6 +67,22 @@ class Wechat321ApplicationTests {
         System.out.println(m);
         m.setMsg_isable(1);
         System.out.println(m);
+    }
+
+    @Test
+    void T2(){
+        String a = "2021-08-05T01:56:31.018Z";
+//        String timed;
+//        a = a.split("\\.")[0].replace("T"," ");
+//        timed = a;
+//        timed = timed.substring(0,timed.length()-3);
+//        System.out.println(a);
+//        System.out.println(a.length());
+//        System.out.println(timed);
+
+        String ctime = a.split("T")[0];
+        System.out.println(ctime);
+
     }
 
 }
