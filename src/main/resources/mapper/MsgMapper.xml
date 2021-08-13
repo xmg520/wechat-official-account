@@ -5,6 +5,7 @@
     <select id="searchMsgbyCode" resultType="com.mzx.wechat321.pojo.MsgCodeKey">
         select * from sys_msg where msg_code = #{code}
     </select>
+
     <select id="searchMsgbyKey" resultType="com.mzx.wechat321.pojo.MsgCodeKey">
         select * from sys_msg where msg_keyword like CONCAT('%',#{keyword},'%')
     </select>

@@ -85,4 +85,11 @@ class Wechat321ApplicationTests {
 
     }
 
+    @Test
+    void T3(){
+
+        List<MsgCodeKey> msgcok = msgService.searchMsgbyKey("个人");
+        System.out.println(msgcok);
+    }
+
 }

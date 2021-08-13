@@ -22,6 +22,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.mzx.wechat321.utill.ByteToUtill.byteToStr;
@@ -51,40 +52,66 @@ public class MyController {
         ReplyMessage replyMessage = MyUtill.getReplyMessage(request);
         String msg = "";
         // 回复内容
-        String responseMessage = "";
+        String responseMessage = "success";
+        replyMessage.setCreateTime(System.currentTimeMillis());
+        System.out.println(replyMessage);
         // 对消息进行处理
-        switch (replyMessage.getMsgType()){
-            case WechatMessageUtil.MESSAGE_TEXT:
-                replyMessage.setCreateTime(System.currentTimeMillis());
-                if (Character.isDigit(replyMessage.getContent().charAt(0))){
-                    if (replyMessage.getContent().length()>3){
-                        msg = msgService.searchMsgbyCode(replyMessage.getContent()).getMsg_content();
-
+        try{
+            switch (replyMessage.getMsgType()){
+                case WechatMessageUtil.MESSAGE_TEXT:
+                    if (Character.isDigit(replyMessage.getContent().charAt(0))){
+                        if (replyMessage.getContent().length()>3 && !replyMessage.getContent().contains("http")){
+                            msg = "感谢使用，本次查询结果为：\n"+msgService.searchMsgbyCode(replyMessage.getContent()).getMsg_content();
+                        }else {
+                            if (replyMessage.getContent().contains("http")){
+                                throw new NullPointerException("无内容报错返回");
+                            }
+                            msg = MyUtill.getCont(replyMessage.getContent());
+                        }
                     }else {
-                        msg = MyUtill.getCont(replyMessage.getContent());
+                        // 关键字查询暂缓
+                        List<MsgCodeKey> msgcok = msgService.searchMsgbyKey(replyMessage.getContent());
+                        for (MsgCodeKey m:msgcok){
+                            System.out.println(m);
+                            msg = m.getMsg_content() + "\n";
+                        }
+                        if (replyMessage.getContent().contains("http") || msgcok.size() < 1){
+                            throw new NullPointerException("无内容报错返回");
+                        }
                     }
-                }else {
-                    // 关键字查询暂缓
-//                    msg = msgService.searchMsgbyKey(replyMessage.getContent());
-                }
-                replyMessage.setContent(msg);
-                responseMessage = WechatMessageUtil.textMessageToXml(replyMessage);
-                break;
-            case WechatMessageUtil.MESSAtGE_IMAGE:
-                break;
-            case WechatMessageUtil.MESSAGE_VOICE:
-                break;
-            case WechatMessageUtil.MESSAGE_LOCATION:
-                break;
-            case WechatMessageUtil.MESSAGE_EVENT_SUBSCRIBE:
-                break;
-            case WechatMessageUtil.MESSAGE_EVENT_UNSUBSCRIBE:
-                break;
+
+                    replyMessage.setContent(msg);
+                    responseMessage = WechatMessageUtil.textMessageToXml(replyMessage).replace(" ","");
+                    break;
+                case WechatMessageUtil.MESSAtGE_IMAGE:
+                    if(replyMessage.getCreateTime()!=0){
+                        throw new NullPointerException("无内容报错返回");
+                    }
+                    break;
+                case WechatMessageUtil.MESSAGE_VOICE:
+                    System.out.println("vocie");
+                    break;
+                case WechatMessageUtil.MESSAGE_LOCATION:
+                    System.out.println("坐标");
+                    break;
+                case WechatMessageUtil.MESSAGE_EVENT_SUBSCRIBE:
+                    System.out.println("订阅");
+                    break;
+                case WechatMessageUtil.MESSAGE_EVENT_UNSUBSCRIBE:
+                    System.out.println("取消");
+                    break;
+                case WechatMessageUtil.MESSAGE_LINK:
+                    System.out.println("link");
+                    break;
+            }
+        }catch (Exception e){
+            replyMessage.setContent("本次请求异常，请检查数据重新尝试");
+            responseMessage = WechatMessageUtil.textMessageToXml(replyMessage);
         }
+
 
         return responseMessage;
     }
-
 
     /**
      * token认证

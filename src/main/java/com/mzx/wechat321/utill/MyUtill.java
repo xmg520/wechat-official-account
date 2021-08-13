@@ -26,10 +26,37 @@ public class MyUtill {
     public static ReplyMessage getReplyMessage(HttpServletRequest request){
         ReplyMessage replyMessage = new ReplyMessage();
         Map<String, String> map = WechatMessageUtil.xmlToMap(request);
-        replyMessage.setContent(map.get("Content"));
-        replyMessage.setFromUserName(map.get("FromUserName"));
+
         replyMessage.setMsgType(map.get("MsgType"));
-        replyMessage.setToUserName(map.get("ToUserName"));
+        replyMessage.setFromUserName(map.get("ToUserName"));
+        replyMessage.setToUserName(map.get("FromUserName"));
+        switch (replyMessage.getMsgType()){
+            case WechatMessageUtil.MESSAGE_TEXT:
+                System.out.println(map.get("MsgType"));
+                String msgcont = map.get("Content").replace(" ","");
+                replyMessage.setContent(msgcont);
+                break;
+            case WechatMessageUtil.MESSAtGE_IMAGE:
+                String picurl = map.get("PicUrl");
+                System.out.println(picurl);
+                replyMessage.setPicUrl(picurl);
+                break;
+            case WechatMessageUtil.MESSAGE_VOICE:
+                System.out.println("vocie");
+                break;
+            case WechatMessageUtil.MESSAGE_LOCATION:
+                System.out.println("坐标");
+                break;
+            case WechatMessageUtil.MESSAGE_EVENT_SUBSCRIBE:
+                System.out.println("订阅");
+                break;
+            case WechatMessageUtil.MESSAGE_EVENT_UNSUBSCRIBE:
+                System.out.println("取消");
+                break;
+            case WechatMessageUtil.MESSAGE_LINK:
+                System.out.println("link");
+                break;
+        }
         return replyMessage;
     }
 

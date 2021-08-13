@@ -1,7 +1,5 @@
 package com.mzx.wechat321.pojo;
 
-import javax.swing.text.StringContent;
-
 public class ReplyMessage {
     // 开发者微信号
     private String ToUserName;
@@ -13,12 +11,40 @@ public class ReplyMessage {
     private String MsgType;
     // 消息id，64位整型
     private long MsgId;
-    // 文本消息内容
-    private String Content;
     /**
      * 位0x0001被标志时，星标刚收到的消息
      */
     private int FuncFlag;
+
+    // 文本消息内容
+    private String Content;
+    // 图片回复部分
+    // 图片url
+    private String PicUrl;
+    // MediaId 图片消息媒体id，可以调用获取临时素材接口拉取数据。
+    private  long MediaId = 1;
+
+    // 链接消息
+    private String Title = "title";
+    private String Description = "contents";
+
+    private String Url;
+
+    public String getUrl() {
+        return Url;
+    }
+
+    public void setUrl(String url) {
+        Url = url;
+    }
+
+    public long getMediaId() {
+        return MediaId;
+    }
+
+    public void setMediaId(long mediaId) {
+        MediaId = mediaId;
+    }
 
     public String getToUserName() {
         return ToUserName;
@@ -67,4 +93,27 @@ public class ReplyMessage {
         Content = content;
     }
 
+    public String getPicUrl() {
+        return PicUrl;
+    }
+
+    public void setPicUrl(String picUrl) {
+        PicUrl = picUrl;
+    }
+
+
+    @Override
+    public String toString() {
+        return "ReplyMessage{" +
+                "ToUserName='" + ToUserName + '\'' +
+                ", FromUserName='" + FromUserName + '\'' +
+                ", CreateTime=" + CreateTime +
+                ", MsgType='" + MsgType + '\'' +
+                ", MsgId=" + MsgId +
+                ", FuncFlag=" + FuncFlag +
+                ", Content='" + Content + '\'' +
+                ", PicUrl='" + PicUrl + '\'' +
+                ", MediaId=" + MediaId +
+                '}';
+    }
 }
